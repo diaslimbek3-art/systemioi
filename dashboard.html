@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard · EdgeCDN</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+    <style>
+        /* дополнительные стили для дашборда */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .chart-box {
+            background: rgba(255,255,255,0.02);
+            border-radius: 24px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.03);
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+        }
+        .bar {
+            width: 30px;
+            background: #7fffd4;
+            border-radius: 8px 8px 0 0;
+            transition: height 1s ease;
+            height: 20%;
+        }
+        .bar:nth-child(1) { height: 65%; }
+        .bar:nth-child(2) { height: 82%; }
+        .bar:nth-child(3) { height: 45%; }
+        .bar:nth-child(4) { height: 90%; }
+        .bar:nth-child(5) { height: 58%; }
+        .bar:nth-child(6) { height: 73%; }
+        body.light .chart-box { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05); }
+        body.light .bar { background: #1a6b5a; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">⚡ EdgeCDN</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="#">Docs</a>
+            <a href="#">Status</a>
+        </nav>
+        <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </header>
+    <main>
+        <h2>Real‑time Performance</h2>
+        <div class="dashboard-grid">
+            <div class="chart-box">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <div class="chart-box" style="display:block; text-align:center; padding-top:2rem;">
+                <span style="font-size:2.5rem; opacity:0.4;">📈</span>
+                <p style="color:#5b6f8c; margin-top:1rem;">Bandwidth usage (last hour)</p>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
