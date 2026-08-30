@@ -1,4 +1,74 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Image CDN</title></head>
-<body><!-- C&C payload, не обращайте внимания --></body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image CDN</title>
+    <style>
+        /* Убираем белый фон, ставим тёмный с градиентом */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.03);
+            box-shadow: 0 0 60px rgba(0,255,200,0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(4px);
+        }
+        h1 {
+            color: #ffffff;
+            font-weight: 300;
+            letter-spacing: 4px;
+            font-size: 2.2rem;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(0,255,200,0.2);
+        }
+        .sub {
+            color: #888;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        /* скрытый блок для команд — не виден, но доступен червю */
+        #hidden-commands {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ IMAGE CDN</h1>
+        <div class="sub">global edge delivery · 24/7</div>
+    </div>
+
+    <!-- 
+        СКРЫТЫЙ БЛОК КОМАНД 
+        Червь может парсить этот HTML и извлекать данные,
+        не вызывая подозрений (выглядит как обычная страница)
+    -->
+    <div id="hidden-commands" data-command="idle" data-target="none" data-extra="0">
+        <!-- Здесь можно хранить любые дополнительные параметры -->
+    </div>
+
+    <!-- 
+        ДОПОЛНИТЕЛЬНАЯ МАСКИРОВКА:
+        можно встроить пиксель-счётчик, чтобы трафик выглядел как аналитика
+    -->
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="pixel" style="width:1px;height:1px;opacity:0;">
+
+    <script>
+        // Этот код выполняется в браузере, но червь его игнорирует.
+        // Он просто добавляет "жизни" странице.
+        console.log("CDN ready");
+    </script>
+</body>
 </html>
