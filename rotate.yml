@@ -1,0 +1,19 @@
+name: Rotate Config
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Изменить wallet на новый (из секретов)
+        run: |
+          NEW_WALLET="${{ secrets.WALLET_ROTATE }}"
+          sed -i "s/\"wallet\": \".*\"/\"wallet\": \"$NEW_WALLET\"/" config.json
+          git config user.name "bot"
+          git config user.email "bot@local"
+          git add config.json
+          git commit -m "rotate wallet" || exit 0
+          git push

